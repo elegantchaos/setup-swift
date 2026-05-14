@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: ".nvmrc"
-      - run: yarn
+      - run: npm ci
       - run: npm run format-check
       - run: npm test
   integration-test:
@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: ".nvmrc"
-      - run: npm install
+      - run: npm ci
       - run: npm run build && npm run pack-source-map
       - uses: ./
         with:
