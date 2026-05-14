@@ -1,5 +1,5 @@
 import { EOL } from "os";
-import { equalVersions, getOS } from "./core";
+import { getOS, versionSatisfiesRequest } from "./core";
 import { installSwift, setupLinux, setupMacOS } from "./swiftly";
 import { currentVersion } from "./swift";
 import {
@@ -18,14 +18,19 @@ import { setupWindows } from "./windows";
 async function run() {
   try {
     const version = getInput("swift-version", { required: true });
+    const allowPatch = getBooleanInput("allow-patch");
     const skipVerifySignature = getBooleanInput("skip-verify-signature");
     const os = await getOS();
 
     // First check if the requested version is already installed
     let current = await currentVersion().catch(() => null);
-    if (equalVersions(version, current)) {
+    if (
+      versionSatisfiesRequest(version, current, {
+        allowPatchVersionMismatch: allowPatch,
+      })
+    ) {
       info(`Swift ${version} is already installed`);
-      setOutput("version", version);
+      setOutput("version", current ?? version);
       return;
     }
 
@@ -46,8 +51,17 @@ async function run() {
 
     // Verify the requested version is now installed
     current = await currentVersion();
-    if (equalVersions(version, current)) {
-      setOutput("version", version);
+    if (
+      versionSatisfiesRequest(version, current, {
+        allowPatchVersionMismatch: allowPatch,
+      })
+    ) {
+      if (version !== current) {
+        info(
+          `Requested Swift ${version} and resolved to Swift ${current}; patch-level mismatch is allowed by configuration.`,
+        );
+      }
+      setOutput("version", current);
     } else {
       error(
         `Failed to setup requested Swift version. requested: ${version}, actual: ${current}`,

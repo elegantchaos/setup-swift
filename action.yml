@@ -6,9 +6,12 @@ inputs:
     description: Swift version to configure
     required: true
     default: "latest"
+  allow-patch:
+    description: Allow a requested x.y version to resolve to x.y.z without failing
+    default: "false"
   skip-verify-signature:
     description: Skip GPG signature verification where applicable
-    default: false
+    default: "false"
 outputs:
   version:
     description: The full Swift version that was configured

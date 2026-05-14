@@ -46,6 +46,15 @@ A specific Swift version can be set using the `swift-version` input:
   run: swift --version # Swift 5.1.0
 ```
 
+By default, setup fails if the installed version does not exactly match the requested version. If you request `x.y` and want to allow resolving to `x.y.z` (where `z > 0`), set `allow-patch` to `true`.
+
+```yaml
+- uses: swift-actions/setup-swift@v3
+  with:
+    swift-version: "5.10"
+    allow-patch: true
+```
+
 Also works with snapshots:
 
 ```yaml
